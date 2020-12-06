@@ -20,7 +20,7 @@ def failure_response(error, code=404):
     return json.dumps({'success': False, 'error': error}), code
 
 #routes
-@app.route('/api/getProjects')
+@app.route('/api/getProjects/')
 def get_projects():
     data = []
     for p in project.query.all():
@@ -28,7 +28,7 @@ def get_projects():
         data.append(formatted_p)
     return success_response(data)
 
-@app.route('/api/createProject', methods=["POST"])
+@app.route('/api/createProject/', methods=["POST"])
 def create_project():
     body = json.loads(request.data)
     if(body.get('title') == None or body.get('description') == None):
@@ -41,6 +41,15 @@ def create_project():
         formatted_project['tasks'] = [t.serialize() for t in task.query.filter_by(project_id = formatted_project.get('id')).all()]
         formatted_project['users'] = [u.serialize() for u in new_project.users]
         return success_response(formatted_project, 201)
+
+@app.route('/api/deleteProject/<int:project_id>/', methods=['DELETE'])
+def delete_project(project_id):
+    selected_project = project.query.filter_by(id = project_id).first()
+    if selected_project == None:
+        return failure_response("Project not found.")
+    db.session.delete(selected_project)
+    db.session.commit()
+    return success_response(selected_project.serialize())
 
 
 if __name__ == "__main__":
