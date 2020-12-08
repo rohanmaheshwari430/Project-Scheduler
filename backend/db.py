@@ -9,36 +9,32 @@ association_table = db.Table(
     db.Column('user_id', db.Integer, db.ForeignKey('user.id'))
 )
 
-
-class project(db.Model):
+class Project(db.Model):
     __tablename__ = 'project'
     id = db.Column(db.Integer, primary_key = True)
     title = db.Column(db.String, nullable = False)
     description = db.Column(db.String, nullable = False)
-    tasks = db.relationship('task', cascade = 'delete')
-    users = db.relationship('user', secondary = association_table, back_populates = 'projects')
+    tasks = db.relationship('Task', cascade = 'delete')
+    users = db.relationship('User', secondary = association_table, back_populates = 'projects')
 
     def __init__(self,**kwargs):
-        self.title = kwargs.get('title')
-        self.description = kwargs.get('description')
+        self.title = kwargs.get('title', '')
+        self.description = kwargs.get('description', '')
 
     def serialize(self):
         return {
             'id': self.id,
-            "title": self.title,
+            'title': self.title,
             'description': self.description
         }
 
-class task(db.Model):
+class Task(db.Model):
     __tablename__ = 'task'
     id = db.Column(db.Integer, primary_key = True)
     title = db.Column(db.String, nullable = False)
     body = db.Column(db.String, nullable = False)
     deadline = db.Column(db.String, nullable = False)
     project_id = db.Column(db.Integer, db.ForeignKey('project.id'), nullable = False)
-    #how to create a relationship between tasks and users. is
-    #a second association table needed? or can be done in one?
-    #assigned_users = some relationship between user class and task class
 
     def __init__(self, **kwargs):
         self.title = kwargs.get('title')
@@ -51,14 +47,15 @@ class task(db.Model):
             'id': self.id,
             'title': self.title,
             'body': self.body,
-            'deadline': self.deadline
+            'deadline': self.deadline,
+            'project_id': self.project_id
         }
 
-class user(db.Model):
+class User(db.Model):
     __tablename__ = 'user'
     id = db.Column(db.Integer, primary_key = True)
     name = db.Column(db.String, nullable = False)
     email = db.Column(db.String, nullable = False)
-    projects = db.relationship('project', secondary = association_table, back_populates = 'users')
+    projects = db.relationship('Project', secondary = association_table, back_populates = 'users')
     #second half of user/task relationship goes here
     #tasks = some relationship between task and users (many to many relationship)

@@ -1,4 +1,5 @@
-from db import db, project, task, user
+from db import db
+from db import Project, Task, User
 from flask import Flask, request, json
 import datetime
 
@@ -20,37 +21,53 @@ def failure_response(error, code=404):
     return json.dumps({'success': False, 'error': error}), code
 
 #routes
-@app.route('/api/getProjects/')
+@app.route('/api/projects/')
 def get_projects():
     data = []
-    for p in project.query.all():
+    for p in Project.query.all():
         formatted_p = p.serialize()
         data.append(formatted_p)
     return success_response(data)
 
-@app.route('/api/createProject/', methods=["POST"])
+@app.route('/api/projects/', methods=["POST"])
 def create_project():
     body = json.loads(request.data)
     if(body.get('title') == None or body.get('description') == None):
         return failure_response('One or more fields is missing.')
     else:
-        new_project = project(title = body.get('title'), description = body.get('description'))
+        new_project = Project(title = body.get('title'), description = body.get('description'))
         db.session.add(new_project)
         db.session.commit()
         formatted_project = new_project.serialize()
-        formatted_project['tasks'] = [t.serialize() for t in task.query.filter_by(project_id = formatted_project.get('id')).all()]
+        formatted_project['tasks'] = [t.serialize() for t in Task.query.filter_by(project_id = formatted_project.get('id')).all()]
         formatted_project['users'] = [u.serialize() for u in new_project.users]
         return success_response(formatted_project, 201)
 
-@app.route('/api/deleteProject/<int:project_id>/', methods=['DELETE'])
+@app.route("/api/projects/<int:project_id>/", methods=["PATCH"])
+def update_project(project_id):
+    body = json.loads(request.data)
+    selected_project = Project.query.filter_by(id = project_id).first()
+    if selected_project == None:
+        return failure_response("Project not found.")
+    if not isinstance(body.get('title'), str) and not isinstance(body.get('description'), str) == None and not all(isinstance(elem, User) for elem in body.get('users')):
+        return failure_response("Please enter a valid entry for at least one of the fields.")
+    if isinstance(body.get('title'), str):
+        selected_project.title = body.get('title')
+    if isinstance(body.get('description'), str):
+        selected_project.description = body.get('description')
+    if not body.get('users') == None and all(isinstance(elem, User) for elem in body.get('users')):
+        selected_project.title = body.get('title')
+    db.session.commit()
+    return success_response(selected_project.serialize(), 200)
+
+@app.route('/api/projects/<int:project_id>/', methods=["DELETE"])
 def delete_project(project_id):
-    selected_project = project.query.filter_by(id = project_id).first()
+    selected_project = Project.query.filter_by(id = project_id).first()
     if selected_project == None:
         return failure_response("Project not found.")
     db.session.delete(selected_project)
     db.session.commit()
-    return success_response(selected_project.serialize())
-
+    return success_response(selected_project.serialize(), 200)
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000, debug=True)
