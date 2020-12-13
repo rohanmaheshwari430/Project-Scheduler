@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		8664819B25847FAE00EE4A11 /* task.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8664819A25847FAE00EE4A11 /* task.swift */; };
 		86CE53B0257C1D8B005AD5D5 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86CE53AF257C1D8B005AD5D5 /* AppDelegate.swift */; };
 		86CE53B2257C1D8B005AD5D5 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86CE53B1257C1D8B005AD5D5 /* SceneDelegate.swift */; };
 		86CE53B4257C1D8B005AD5D5 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86CE53B3257C1D8B005AD5D5 /* ViewController.swift */; };
@@ -18,6 +19,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		8664819A25847FAE00EE4A11 /* task.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = task.swift; sourceTree = "<group>"; };
 		86CE53AC257C1D8B005AD5D5 /* Project Scheduler.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Project Scheduler.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		86CE53AF257C1D8B005AD5D5 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		86CE53B1257C1D8B005AD5D5 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -66,6 +68,7 @@
 				86CE53CB257C219A005AD5D5 /* AddViewController.swift */,
 				86CE53C5257C1FF2005AD5D5 /* ProjectTableViewCell.swift */,
 				86CE53C8257C200F005AD5D5 /* project.swift */,
+				8664819A25847FAE00EE4A11 /* task.swift */,
 				86CE53B8257C1D8D005AD5D5 /* Assets.xcassets */,
 				86CE53BA257C1D8D005AD5D5 /* LaunchScreen.storyboard */,
 				86CE53BD257C1D8D005AD5D5 /* Info.plist */,
@@ -145,6 +148,7 @@
 				86CE53C9257C200F005AD5D5 /* project.swift in Sources */,
 				86CE53B4257C1D8B005AD5D5 /* ViewController.swift in Sources */,
 				86CE53CC257C219A005AD5D5 /* AddViewController.swift in Sources */,
+				8664819B25847FAE00EE4A11 /* task.swift in Sources */,
 				86CE53B0257C1D8B005AD5D5 /* AppDelegate.swift in Sources */,
 				86CE53B2257C1D8B005AD5D5 /* SceneDelegate.swift in Sources */,
 				86CE53C6257C1FF2005AD5D5 /* ProjectTableViewCell.swift in Sources */,
