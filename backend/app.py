@@ -94,24 +94,26 @@ def create_task(project_id):
 @app.route('/api/projects/tasks/<int:task_id>/', methods=["POST"])
 def add_user_to_task(task_id):
 
+    body = json.loads(request.data)
     #query users by email 
-    #if email not exist, create user like below
-    
-    #check if name matches if email matches, throw error if diffenrent (given email exists)
+    selected_user = User.query.filter_by(email = body.get('email')).first()
     selected_task = Task.query.filter_by(id = task_id).first()
     if selected_task == None:
         return failure_response("Task not found.")
-    body = json.loads(request.data)
-    if body.get('name') == None:
-        return failure_response("One or more fields is missing.")
-    new_user = User(name = body.get('name'), email = body.get('email', None))
-    db.session.add(new_user)
-    db.commit()
-    selected_task.users.append(new_user)
-    db.commit()
+    if selected_user == None: #if email not exist, create user like below
+        new_user = User(name = body.get('name'), email = body.get('email', None))
+        db.session.add(new_user)
+        db.commit()
+        selected_task.users.append(new_user)
+        db.commit()
     
-
-#add user to project
+    formatted_selected_user = selected_user.serialize()
+    if body.get('name') != formatted_selected_user["name"]:
+        return failure_response("Invalid user. Two users cannot have the same email.")
+    
+    selected_task.user.append(selected_user)
+    db.session.commit()
+    return success_response("User has been added" + selected_task.serialize()["title"])
 
 
 if __name__ == "__main__":
