@@ -83,12 +83,21 @@ def create_task(project_id):
     if body.get('title') == None or body.get('deadline') == None or body.get('body') == None:
         return failure_response("One or more fields are missing.")
     else:
-        new_task = Task(title = body.get('title'), deadline= body.get('deadline'), description = body.get('body'), project_id = project_id)
+        new_task = Task(title = body.get('title'), deadline= body.get('deadline'), body = body.get('body'), project_id = project_id)
     db.session.add(new_task)
     db.session.commit()
 
     return success_response("Task created!")
 
+@app.route('/api/projects/<int:project_id>/')
+def get_tasks_for_project(project_id):
+    data = []
+    for T in Task.query.filter_by(project_id = project_id).all():
+        formatted_task = T.serialize()
+        data.append(formatted_task)
+        
+    return success_response(data)
+   
 
 #add user to task
 @app.route('/api/projects/tasks/<int:task_id>/', methods=["POST"])
