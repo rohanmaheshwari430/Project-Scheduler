@@ -49,14 +49,12 @@ def update_project(project_id):
     selected_project = Project.query.filter_by(id = project_id).first()
     if selected_project == None:
         return failure_response("Project not found.")
-    if not isinstance(body.get('title'), str) and not isinstance(body.get('description'), str) == None and not all(isinstance(elem, User) for elem in body.get('users')):
+    if not isinstance(body.get('title'), str) and not isinstance(body.get('description'), str) == None:
         return failure_response("Please enter a valid entry for at least one of the fields.")
     if isinstance(body.get('title'), str):
         selected_project.title = body.get('title')
     if isinstance(body.get('description'), str):
         selected_project.description = body.get('description')
-    if not body.get('users') == None and all(isinstance(elem, User) for elem in body.get('users')):
-        selected_project.title = body.get('title')
     db.session.commit()
     return success_response(selected_project.serialize(), 200)
 
@@ -68,6 +66,48 @@ def delete_project(project_id):
     db.session.delete(selected_project)
     db.session.commit()
     return success_response(selected_project.serialize(), 200)
+
+@app.route('/api/tasks/<int:project_id>/', methods=["POST"])
+def create_task(project_id):
+    body = json.loads(request.data)
+    if (project_id == None or body.get('title') == None):
+        return failure_response('One or more fields is missing.')
+    else:
+        selected_project = Project.query.filter_by(id = project_id).first()
+        if selected_project == None:
+            return failure_response("Project not found.")
+        new_task = Task(title = body.get('title'), project_id = project_id)
+        db.session.add(new_task)
+        db.session.commit()
+        formatted_task = new_task.serialize()
+        formatted_task['project'] = selected_project.serialize()
+        return success_response(formatted_task, 201)
+
+@app.route("/api/tasks/<int:task_id>/", methods=["PATCH"])
+def update_task(task_id):
+    body = json.loads(request.data)
+    selected_task = Task.query.filter_by(id = task_id).first()
+    if selected_task == None:
+        return failure_response("Task not found.")
+    if not isinstance(body.get('title'), str) and not isinstance(body.get('body'), str) and not isinstance(body.get('deadline'), str) == None:
+        return failure_response("Please enter a valid entry for at least one of the fields.")
+    if isinstance(body.get('title'), str):
+        selected_task.title = body.get('title')
+    if isinstance(body.get('body'), str):
+        selected_task.body = body.get('body')
+    if isinstance(body.get('deadline'), str):
+        selected_task.deadline = body.get('deadline')
+    db.session.commit()
+    return success_response(selected_project.serialize(), 200)
+
+@app.route('/api/tasks/<int:task_id>/', methods=["DELETE"])
+def delete_task(task_id):
+    selected_task = Task.query.filter_by(id = task_id).first()
+    if selected_task == None:
+        return failure_response("Task not found.")
+    db.session.delete(task_id)
+    db.session.commit()
+    return success_response(selected_task.serialize(), 200)
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000, debug=True)

@@ -6,7 +6,8 @@ association_table = db.Table(
     'association',
     db.Model.metadata,
     db.Column('project_id', db.Integer, db.ForeignKey('project.id')),
-    db.Column('user_id', db.Integer, db.ForeignKey('user.id'))
+    db.Column('user_id', db.Integer, db.ForeignKey('user.id')),
+    db.Column('task_id', db.Integer, db.ForeignKey('task.id'))
 )
 
 class Project(db.Model):
@@ -35,11 +36,12 @@ class Task(db.Model):
     body = db.Column(db.String, nullable = False)
     deadline = db.Column(db.String, nullable = False)
     project_id = db.Column(db.Integer, db.ForeignKey('project.id'), nullable = False)
+    users = db.relationship('User', secondary = association_table, back_populates = 'tasks')
 
     def __init__(self, **kwargs):
         self.title = kwargs.get('title')
-        self.body = kwargs.get('body')
-        self.deadline = kwargs.get('deadline')
+        self.body = kwargs.get('body', '')
+        self.deadline = kwargs.get('deadline', '')
         self.project_id = kwargs.get('project_id')
 
     def serialize(self):
@@ -57,5 +59,17 @@ class User(db.Model):
     name = db.Column(db.String, nullable = False)
     email = db.Column(db.String, nullable = False)
     projects = db.relationship('Project', secondary = association_table, back_populates = 'users')
-    #second half of user/task relationship goes here
-    #tasks = some relationship between task and users (many to many relationship)
+    tasks = db.relationship('Task', secondary = association_table, back_populates = 'users')
+
+    def __init__(self, **kwargs):
+        self.name = kwargs.get('name')
+        self.email = kwargs.get('email')
+
+    def serialize(self):
+        return {
+            'id': self.id,
+            'name': self.name,
+            'email': self.email,
+            'projects': self.projects,
+            'tasks': self.tasks
+        }
