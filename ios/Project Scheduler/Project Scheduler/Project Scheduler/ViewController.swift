@@ -11,6 +11,9 @@ protocol SaveDelegate: class {
     func save(newName: String, newContent:String)
 }
 
+protocol ProjectDelegate: class {
+    func save(newName: String, newContent: String, newTasks: [Task], id: Int)
+}
 class ViewController: UIViewController {
     var tableView: UITableView!
 
@@ -81,6 +84,9 @@ extension ViewController: UITableViewDelegate {
     }
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let project = Projects[indexPath.row]
+        let newProjectViewController = ProjectViewController(delegate: self, project: project, id: indexPath.row)
+        navigationController?.pushViewController(newProjectViewController, animated: true)
     }
     
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
@@ -97,6 +103,13 @@ extension ViewController: SaveDelegate {
     func save(newName: String, newContent:String) {
         let entry = Project(name: newName,content: newContent)
         Projects.append(entry)
+        tableView.reloadData()
+    }
+}
+
+extension ViewController: ProjectDelegate {
+    func save(newName: String, newContent: String, newTasks: [Task], id: Int) {
+        Projects[id].Tasks = newTasks
         tableView.reloadData()
     }
 }
