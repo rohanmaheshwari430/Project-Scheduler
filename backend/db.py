@@ -9,6 +9,7 @@ association_table = db.Table(
     db.Column('user_id', db.Integer, db.ForeignKey('user.id'))
 )
 
+
 class Project(db.Model):
     __tablename__ = 'project'
     id = db.Column(db.Integer, primary_key = True)
@@ -34,7 +35,8 @@ class Task(db.Model):
     title = db.Column(db.String, nullable = False)
     body = db.Column(db.String, nullable = False)
     deadline = db.Column(db.String, nullable = False)
-    project_id = db.Column(db.Integer, db.ForeignKey('project.id'), nullable = False)
+    project_id = db.Column(db.Integer, db.ForeignKey('Project.id'), nullable = False)
+    users = db.relationship('User', cascade ='delete')
 
     def __init__(self, **kwargs):
         self.title = kwargs.get('title')
@@ -55,7 +57,8 @@ class User(db.Model):
     __tablename__ = 'user'
     id = db.Column(db.Integer, primary_key = True)
     name = db.Column(db.String, nullable = False)
-    email = db.Column(db.String, nullable = False)
+    email = db.Column(db.String, nullable = True)
+    task_id = db.Column(db.Integer, db.foreignKey('Task.id'), nullable = False)
     projects = db.relationship('Project', secondary = association_table, back_populates = 'users')
     #second half of user/task relationship goes here
     #tasks = some relationship between task and users (many to many relationship)

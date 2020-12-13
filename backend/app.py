@@ -57,17 +57,62 @@ def update_project(project_id):
         selected_project.description = body.get('description')
     if not body.get('users') == None and all(isinstance(elem, User) for elem in body.get('users')):
         selected_project.title = body.get('title')
+
+    #update tasks
     db.session.commit()
     return success_response(selected_project.serialize(), 200)
 
 @app.route('/api/projects/<int:project_id>/', methods=["DELETE"])
 def delete_project(project_id):
-    selected_project = Project.query.filter_by(id = project_id).first()
+    selected_project = Project.query.filter_by(id = project_id).first() 
     if selected_project == None:
         return failure_response("Project not found.")
     db.session.delete(selected_project)
     db.session.commit()
     return success_response(selected_project.serialize(), 200)
+
+
+#tasks api endpoiint
+# projects -> task 
+@app.route('/api/projects/<int:project_id>/', methods=["POST"]) 
+def create_task(project_id):
+    selected_project = Project.query.filter_by(id = project_id).first()
+    if selected_project == None: 
+        return failure_response("Project not found.")
+    body = json.loads(request.data)
+    if body.get('title') == None or body.get('deadline') == None or body.get('body') == None:
+        return failure_response("One or more fields are missing.")
+    else:
+        new_task = Task(title = body.get('title'), deadline= body.get('deadline'), description = body.get('body'), project_id = project_id)
+    db.session.add(new_task)
+    db.session.commit()
+
+    return success_response("Task created!")
+
+
+#add user to task
+@app.route('/api/projects/tasks/<int:task_id>/', methods=["POST"])
+def add_user_to_task(task_id):
+
+    #query users by email 
+    #if email not exist, create user like below
+    
+    #check if name matches if email matches, throw error if diffenrent (given email exists)
+    selected_task = Task.query.filter_by(id = task_id).first()
+    if selected_task == None:
+        return failure_response("Task not found.")
+    body = json.loads(request.data)
+    if body.get('name') == None:
+        return failure_response("One or more fields is missing.")
+    new_user = User(name = body.get('name'), email = body.get('email', None))
+    db.session.add(new_user)
+    db.commit()
+    selected_task.users.append(new_user)
+    db.commit()
+    
+
+#add user to project
+
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000, debug=True)
