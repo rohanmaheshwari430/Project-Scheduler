@@ -41,22 +41,22 @@ class TaskTableViewCell: UITableViewCell {
     
     func setupConstraints(){
         
-        let padding: CGFloat = 10
+        let padding: CGFloat = 8
         
         NSLayoutConstraint.activate([
             nameLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: padding),
             nameLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: padding),
-            nameLabel.heightAnchor.constraint(equalToConstant: 20),
+            nameLabel.heightAnchor.constraint(equalToConstant: 15),
             deadlineLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: padding),
             deadlineLabel.topAnchor.constraint(equalTo: nameLabel.bottomAnchor, constant: padding),
-            deadlineLabel.heightAnchor.constraint(equalToConstant: 15)
+            deadlineLabel.heightAnchor.constraint(equalToConstant: 10)
         ])
         
     }
     
     func configure(for Task: Task) {
-        nameLabel.text = Task.name
-        deadlineLabel.text = Task.deadline
+        nameLabel.text = "Task: " + Task.name
+        deadlineLabel.text = "Deadline: " + Task.deadline
     }
 
 }

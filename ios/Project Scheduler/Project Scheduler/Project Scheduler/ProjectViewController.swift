@@ -17,11 +17,11 @@ class ProjectViewController: UIViewController {
     var titleLabel: UILabel!
     var name: UITextField!
     var contentLabel: UILabel!
-    var content: UITextField!
+    var content: UITextView!
     var addTaskButton: UIButton!
     
     let reuseIdentifier = "CellReuse"
-    let cellHeight: CGFloat = 50
+    let cellHeight: CGFloat = 80
     var tasks: [Task]!
     var project: Project!
     var id: Int!
@@ -46,15 +46,15 @@ class ProjectViewController: UIViewController {
         view.backgroundColor = lightBlue
         title = project.name
         
-        //tableView = UITableView()
-        //tableView.translatesAutoresizingMaskIntoConstraints = false
-        //tableView.backgroundColor = .white
-        //tableView.dataSource = self
-        //tableView.delegate = self
-        //tableView.rowHeight = cellHeight
-        //tableView.register(TaskTableViewCell.self
-        //    , forCellReuseIdentifier: reuseIdentifier)
-        //view.addSubview(tableView)
+        tableView = UITableView()
+        tableView.translatesAutoresizingMaskIntoConstraints = false
+        tableView.backgroundColor = .white
+        tableView.dataSource = self
+        tableView.delegate = self
+        tableView.rowHeight = cellHeight
+        tableView.register(TaskTableViewCell.self
+            , forCellReuseIdentifier: reuseIdentifier)
+        view.addSubview(tableView)
         
         titleLabel = UILabel()
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
@@ -67,13 +67,10 @@ class ProjectViewController: UIViewController {
         name = UITextField()
         name.translatesAutoresizingMaskIntoConstraints = false
         name.font = .systemFont(ofSize: 30)
-        name.borderStyle = .roundedRect
-        name.layer.cornerRadius = 5.0
-        name.layer.borderWidth = 0.7
         name.backgroundColor = lightBlue
         name.clearButtonMode = UITextField.ViewMode.whileEditing
         name.textColor = .white
-        name.textAlignment = .center
+        name.textAlignment = .left
         name.text = project.name
         view.addSubview(name)
         
@@ -85,16 +82,13 @@ class ProjectViewController: UIViewController {
         contentLabel.text = "Content:"
         view.addSubview(contentLabel)
         
-        content = UITextField()
+        content = UITextView()
         content.translatesAutoresizingMaskIntoConstraints = false
         content.font = .systemFont(ofSize: 30)
-        content.borderStyle = .roundedRect
-        content.layer.cornerRadius = 5.0
-        content.layer.borderWidth = 0.7
         content.backgroundColor = lightBlue
-        content.clearButtonMode = UITextField.ViewMode.whileEditing
+        content.isEditable = true
         content.textColor = .white
-        content.textAlignment = .center
+        content.textAlignment = .left
         content.text = project.content
         view.addSubview(content)
         
@@ -102,18 +96,20 @@ class ProjectViewController: UIViewController {
         addTaskButton.translatesAutoresizingMaskIntoConstraints = false
         addTaskButton.setTitle("Add Task", for: .normal)
         addTaskButton.setTitleColor(lightBrown, for: .normal)
-        addTaskButton.backgroundColor = .white
+        addTaskButton.backgroundColor = lightBlue
         addTaskButton.layer.borderColor = lightBrown.cgColor
         addTaskButton.layer.borderWidth = 0.8
         addTaskButton.layer.cornerRadius = 8
         addTaskButton.addTarget(self, action: #selector(addTask), for: .touchUpInside)
         view.addSubview(addTaskButton)
+        
+        setupConstraints()
 
         // Do any additional setup after loading the view.
     }
     
     func setupConstraints(){
-        let topPadding: CGFloat = 50
+        let topPadding: CGFloat = 30
         let leftAnchor: CGFloat = 20
         let padding1: CGFloat = 15
         let labelHeight: CGFloat = 25
@@ -123,24 +119,27 @@ class ProjectViewController: UIViewController {
             tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             tableView.topAnchor.constraint(equalTo: view.centerYAnchor),
-            //tableView.heightAnchor.constraint(equalToConstant: //view.heightAnchor / 2.0),
-            tableView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
+            tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
             titleLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: topPadding),
             titleLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: leftAnchor),
             titleLabel.heightAnchor.constraint(equalToConstant: labelHeight),
             titleLabel.trailingAnchor.constraint(equalTo: view.centerXAnchor),
             name.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: padding1),
-            name.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            name.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            name.heightAnchor.constraint(equalToConstant: fieldHeight),
+            name.leadingAnchor.constraint(equalTo: titleLabel.leadingAnchor),
+            name.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -padding1),
+            name.heightAnchor.constraint(equalToConstant: labelHeight),
             contentLabel.topAnchor.constraint(equalTo: name.bottomAnchor, constant: padding1),
             contentLabel.leadingAnchor.constraint(equalTo: titleLabel.leadingAnchor),
             contentLabel.heightAnchor.constraint(equalToConstant: labelHeight),
             contentLabel.trailingAnchor.constraint(equalTo: view.centerXAnchor),
             content.topAnchor.constraint(equalTo: contentLabel.bottomAnchor, constant: padding1),
-            content.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            content.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            content.heightAnchor.constraint(equalToConstant: fieldHeight)
+            content.leadingAnchor.constraint(equalTo: contentLabel.leadingAnchor),
+            content.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -padding1),
+            content.heightAnchor.constraint(equalToConstant: fieldHeight),
+            addTaskButton.bottomAnchor.constraint(equalTo: view.centerYAnchor, constant: padding1),
+            addTaskButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            addTaskButton.heightAnchor.constraint(equalToConstant: labelHeight),
+            addTaskButton.widthAnchor.constraint(equalToConstant: 150)
         ])
     }
     
@@ -149,7 +148,7 @@ class ProjectViewController: UIViewController {
         present(newAddTaskViewController, animated: true, completion: nil)
     }
     
-    /*override func viewWillDisappear(_ animated: Bool) {
+    override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
 
         if self.isMovingFromParent {
@@ -164,7 +163,7 @@ class ProjectViewController: UIViewController {
             }
         }
     }
- */
+ 
     /*
     // MARK: - Navigation
 
