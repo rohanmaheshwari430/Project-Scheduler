@@ -24,7 +24,9 @@ class AddViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .white
+        
+        let lightBlue = UIColor(red: 93/255, green: 120/255, blue: 163/255, alpha: 1.00)
+        view.backgroundColor = lightBlue
         navigationItem.rightBarButtonItem = UIBarButtonItem(title: "CREATE", style: .plain, target: self, action: #selector(add))
         //121, 219, 116
         let lightGreen = UIColor(red: 121/255, green: 219/255, blue: 116/255, alpha: 1.00)
@@ -34,18 +36,23 @@ class AddViewController: UIViewController {
         setUpTextField(textField: name, size: 30)
         name.placeholder = "Name of Project"
         name.layer.borderWidth = 1
+        name.backgroundColor = lightBlue
+        name.textColor = .white
         content.translatesAutoresizingMaskIntoConstraints = false
-        content.backgroundColor = .white
+        content.backgroundColor = lightBlue
         content.layer.borderWidth = 1
         //textField.textAlignment = .center
         content.font = .systemFont(ofSize: 15)
         content.layer.cornerRadius = 5.0;
         content.clipsToBounds = true;
+        content.textColor = .white
+        
         view.addSubview(content)
         nameLabel = UILabel()
         nameLabel.text = "Project Description(Optional):"
         nameLabel.translatesAutoresizingMaskIntoConstraints = false
         nameLabel.font = .systemFont(ofSize: 20)
+        nameLabel.textColor = .white
         view.addSubview(nameLabel)
         setupConstraints()
         // Do any additional setup after loading the view.
@@ -55,7 +62,6 @@ class AddViewController: UIViewController {
         textField.translatesAutoresizingMaskIntoConstraints = false
         textField.borderStyle = .roundedRect
         textField.layer.cornerRadius = 5.0;
-        textField.backgroundColor = .white
         //textField.textAlignment = .center
         textField.font = .systemFont(ofSize: CGFloat(size))
         textField.clearButtonMode = UITextField.ViewMode.whileEditing;

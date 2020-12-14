@@ -109,6 +109,8 @@ extension ViewController: SaveDelegate {
 
 extension ViewController: ProjectDelegate {
     func save(newName: String, newContent: String, newTasks: [Task], id: Int) {
+        Projects[id].name = newName
+        Projects[id].content = newContent
         Projects[id].Tasks = newTasks
         tableView.reloadData()
     }
