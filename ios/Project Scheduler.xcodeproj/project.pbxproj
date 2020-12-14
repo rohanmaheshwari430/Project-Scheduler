@@ -19,6 +19,8 @@
 		86CE53C6257C1FF2005AD5D5 /* ProjectTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86CE53C5257C1FF2005AD5D5 /* ProjectTableViewCell.swift */; };
 		86CE53C9257C200F005AD5D5 /* project.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86CE53C8257C200F005AD5D5 /* project.swift */; };
 		86CE53CC257C219A005AD5D5 /* AddViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86CE53CB257C219A005AD5D5 /* AddViewController.swift */; };
+		E6C9DC412587FE8D0010D31E /* user.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6C9DC402587FE8D0010D31E /* user.swift */; };
+		E6C9DC43258803F50010D31E /* NetworkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6C9DC42258803F50010D31E /* NetworkManager.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -36,6 +38,8 @@
 		86CE53C5257C1FF2005AD5D5 /* ProjectTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectTableViewCell.swift; sourceTree = "<group>"; };
 		86CE53C8257C200F005AD5D5 /* project.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = project.swift; sourceTree = "<group>"; };
 		86CE53CB257C219A005AD5D5 /* AddViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddViewController.swift; sourceTree = "<group>"; };
+		E6C9DC402587FE8D0010D31E /* user.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = user.swift; sourceTree = "<group>"; };
+		E6C9DC42258803F50010D31E /* NetworkManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkManager.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -77,6 +81,8 @@
 				86CE53CB257C219A005AD5D5 /* AddViewController.swift */,
 				86CE53C5257C1FF2005AD5D5 /* ProjectTableViewCell.swift */,
 				86CE53C8257C200F005AD5D5 /* project.swift */,
+				E6C9DC42258803F50010D31E /* NetworkManager.swift */,
+				E6C9DC402587FE8D0010D31E /* user.swift */,
 				8664819A25847FAE00EE4A11 /* task.swift */,
 				86CE53B8257C1D8D005AD5D5 /* Assets.xcassets */,
 				86CE53BA257C1D8D005AD5D5 /* LaunchScreen.storyboard */,
@@ -154,6 +160,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E6C9DC43258803F50010D31E /* NetworkManager.swift in Sources */,
 				86CE53C9257C200F005AD5D5 /* project.swift in Sources */,
 				86CE53B4257C1D8B005AD5D5 /* ViewController.swift in Sources */,
 				869CEDA22586D912003FD842 /* TaskTableViewCell.swift in Sources */,
@@ -163,6 +170,7 @@
 				86CE53B0257C1D8B005AD5D5 /* AppDelegate.swift in Sources */,
 				86CE53B2257C1D8B005AD5D5 /* SceneDelegate.swift in Sources */,
 				869CED9F2586D90A003FD842 /* AddTaskViewController.swift in Sources */,
+				E6C9DC412587FE8D0010D31E /* user.swift in Sources */,
 				86CE53C6257C1FF2005AD5D5 /* ProjectTableViewCell.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -304,6 +312,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				INFOPLIST_FILE = "Project Scheduler/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 13.2;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -322,6 +331,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				INFOPLIST_FILE = "Project Scheduler/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 13.2;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
