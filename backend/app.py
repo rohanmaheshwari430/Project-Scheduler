@@ -86,8 +86,17 @@ def create_task(project_id):
         formatted_task['project'] = selected_project.serialize()
         return success_response(formatted_task, 201)
 
+@app.route('/api/projects/<int:project_id>/tasks/')
+def get_tasks_for_project(project_id):
+    data = []
+    for t in Task.query.filter_by(project_id = project_id).all():
+        formatted_task = t.serialize()
+        data.append(formatted_task)
+        
+    return success_response(data)
+
 #add user to task
-@app.route('/api/tasks/users/<int:task_id>/', methods=["POST"])
+@app.route('/api/tasks/<int:task_id>/users/', methods=["POST"])
 def add_user_to_task(task_id):
     body = json.loads(request.data)
     #query users by email 
