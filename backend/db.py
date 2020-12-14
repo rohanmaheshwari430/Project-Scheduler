@@ -10,6 +10,7 @@ association_table = db.Table(
     db.Column('task_id', db.Integer, db.ForeignKey('task.id'))
 )
 
+
 class Project(db.Model):
     __tablename__ = 'project'
     id = db.Column(db.Integer, primary_key = True)
@@ -57,7 +58,7 @@ class User(db.Model):
     __tablename__ = 'user'
     id = db.Column(db.Integer, primary_key = True)
     name = db.Column(db.String, nullable = False)
-    email = db.Column(db.String, nullable = False)
+    email = db.Column(db.String, nullable = True)
     projects = db.relationship('Project', secondary = association_table, back_populates = 'users')
     tasks = db.relationship('Task', secondary = association_table, back_populates = 'users')
 
@@ -69,7 +70,5 @@ class User(db.Model):
         return {
             'id': self.id,
             'name': self.name,
-            'email': self.email,
-            'projects': self.projects,
-            'tasks': self.tasks
+            'email': self.email
         }
