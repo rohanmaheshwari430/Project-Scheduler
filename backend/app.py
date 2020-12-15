@@ -18,9 +18,6 @@ with app.app_context():
 def success_response(data, code=200):
     return json.dumps({'success': True, 'data': data}), code
 
-def success_response(data, message, code=200):
-    return json.dumps({'success': True, 'message': message, 'data': data}), code
-
 def failure_response(error, code=404):
     return json.dumps({'success': False, 'error': error}), code
 
@@ -101,9 +98,9 @@ def delete_user_from_project(user_id, project_id):
         #selected_project.users.remove(selected_user)
         db.session.commit()
         formatted_selected_user = selected_user.serialize()
-        return success_response(formatted_selected_user, "User has been removed from: " + selected_project.serialize()["title"], 201)
+        return success_response(formatted_selected_user, 201)
     else:
-        return failure_response(formatted_selected_user, "User is not assigned to that project.")
+        return failure_response(formatted_selected_user)
 
 @app.route('/api/tasks/<int:project_id>/', methods=["POST"])
 def create_task(project_id):
@@ -114,11 +111,15 @@ def create_task(project_id):
         selected_project = Project.query.filter_by(id = project_id).first()
         if selected_project == None:
             return failure_response("Project not found.")
-        new_task = Task(title = body.get('title'), body = body.get('body'), deadline = body.get('deadline'), project_id = project_id)
+        if body.get('body') == None:
+            new_task = Task(title = body.get('title'), body = body.get('body'), deadline = body.get('deadline'), project_id = project_id)
+        else:
+            new_task = Task(title = body.get('title'), body = body.get('body'), deadline = body.get('deadline'), project_id = project_id)
         db.session.add(new_task)
         db.session.commit()
         formatted_task = new_task.serialize()
-        formatted_task['project'] = selected_project.serialize()
+        #formatted_task['project'] = selected_project.serialize()
+        #formatted_task['users'] = [u.serialize() for u in selected_task.users]
         return success_response(formatted_task, 201)
 
 @app.route('/api/projects/<int:project_id>/tasks/')
@@ -128,14 +129,14 @@ def get_tasks_for_project(project_id):
         formatted_task = t.serialize()
         data.append(formatted_task)
         
-    return success_response(data)
+    return success_response(data, "These are the tasks for the project.")
 
 @app.route('/api/tasks/<int:task_id>/')
 def get_task(task_id):
     selected_task = Task.query.filter_by(id = task_id).first()
     formatted_task = selected_task.serialize()
-    formatted_task['project'] = Project.query.filter_by(id = selected_task.project_id).first().serialize()
-    formatted_task['users'] = [u.serialize() for u in selected_task.users]
+    #formatted_task['project'] = Project.query.filter_by(id = selected_task.project_id).first().serialize()
+    #formatted_task['users'] = [u.serialize() for u in selected_task.users]
     return success_response(formatted_task, 200)
 
 #add user to task
@@ -156,10 +157,6 @@ def add_user_to_task(task_id):
 
         selected_task.users.append(new_user)
         selected_project.users.append(new_user)
-        print(selected_task.users)
-        print(selected_task)
-        print(selected_project.users)
-        print("bruhs")
 
         db.session.commit()
         selected_user = new_user
@@ -174,7 +171,7 @@ def add_user_to_task(task_id):
         db.session.commit()
 
     formatted_selected_user = selected_user.serialize()
-    return success_response(formatted_selected_user, "User has been added to: " + selected_task.serialize()["title"], 201)
+    return success_response(formatted_selected_user, 201)
 
 @app.route('/api/tasks/<int:task_id>/users/<int:user_id>/', methods=["DELETE"])
 def delete_user_from_task(user_id, task_id):
@@ -196,9 +193,9 @@ def delete_user_from_task(user_id, task_id):
         #selected_task.users.remove(selected_user)
         db.session.commit()
         formatted_selected_user = selected_user.serialize()
-        return success_response(formatted_selected_user, "User has been removed from: " + selected_task.serialize()["title"], 201)
+        return success_response(formatted_selected_user, 201)
     else:
-        return failure_response(formatted_selected_user, "User is not assigned to that task.")
+        return failure_response(formatted_selected_user)
     
 @app.route("/api/tasks/<int:task_id>/", methods=["PATCH"])
 def update_task(task_id):
@@ -215,7 +212,7 @@ def update_task(task_id):
     if isinstance(body.get('deadline'), str):
         selected_task.deadline = body.get('deadline')
     db.session.commit()
-    return success_response(selected_project.serialize(), 200)
+    return success_response(selected_task.serialize(), 200)
 
 @app.route('/api/tasks/<int:task_id>/', methods=["DELETE"])
 def delete_task(task_id):
