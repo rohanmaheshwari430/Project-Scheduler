@@ -9,6 +9,7 @@ import UIKit
 class TaskTableViewCell: UITableViewCell {
     var nameLabel: UILabel!
     var deadlineLabel: UILabel!
+    var memberLabel : UILabel!
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -30,6 +31,13 @@ class TaskTableViewCell: UITableViewCell {
         deadlineLabel.font = .systemFont(ofSize: 10)
         contentView.addSubview(deadlineLabel)
         
+//        memberLabel = UILabel()
+//        memberLabel.textColor = .black
+//        memberLabel.textAlignment = .right
+//        memberLabel.translatesAutoresizingMaskIntoConstraints = false
+//        memberLabel.font = .systemFont(ofSize: 15)
+//        contentView.addSubview(memberLabel)
+        
         setupConstraints()
         
     }
@@ -50,14 +58,19 @@ class TaskTableViewCell: UITableViewCell {
             
             deadlineLabel.leadingAnchor.constraint(equalTo: nameLabel.leadingAnchor),
             deadlineLabel.topAnchor.constraint(equalTo: nameLabel.bottomAnchor, constant: padding),
-            deadlineLabel.heightAnchor.constraint(equalToConstant: 10)
+            deadlineLabel.heightAnchor.constraint(equalToConstant: 10),
+            
+//            memberLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: padding1),
+//            memberLabel.topAnchor.constraint(equalTo: nameLabel.topAnchor),
+//            memberLabel.heightAnchor.constraint(equalToConstant: 10)
         ])
         
     }
     
     func configure(for Task: Task) {
-        nameLabel.text = "Task: " + Task.name
+        nameLabel.text = "Task: " + Task.title
         deadlineLabel.text = "Deadline: " + Task.deadline
+        
     }
 
 }

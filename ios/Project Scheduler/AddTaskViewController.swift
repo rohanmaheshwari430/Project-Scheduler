@@ -15,11 +15,19 @@ class AddTaskViewController: UIViewController {
     var contentLabel: UILabel!
     var content: UITextField!
     var addButton: UIButton!
+    var memberLabel:UILabel!
+    var member:UITextField!
+    var email:UITextField!
+    var addUserButton:UIButton!
+    var Users:[String:String]!
+    var projectId:Int!
+    var taskId:Int!
     weak var delegate: TaskDelegate?
     
-    init(delegate: TaskDelegate?) {
+    init(delegate: TaskDelegate?, id:Int) {
         super.init(nibName: nil, bundle: nil)
         self.delegate = delegate
+        self.projectId = id
     }
     
     required init?(coder: NSCoder) {
@@ -106,6 +114,51 @@ class AddTaskViewController: UIViewController {
         addButton.addTarget(self, action: #selector(add), for: .touchUpInside)
         view.addSubview(addButton)
         
+        memberLabel = UILabel()
+        memberLabel.translatesAutoresizingMaskIntoConstraints = false
+        memberLabel.font = .systemFont(ofSize: 25)
+        memberLabel.textColor = .lightGray
+        memberLabel.text = "User:"
+        memberLabel.textAlignment = .right
+        view.addSubview(memberLabel)
+        
+        member = UITextField()
+        member.translatesAutoresizingMaskIntoConstraints = false
+        member.font = .systemFont(ofSize: 30)
+        member.borderStyle = .roundedRect
+        member.layer.cornerRadius = 5.0
+        member.layer.borderWidth = 0.7
+        member.backgroundColor = lightBlue
+        member.clearButtonMode = UITextField.ViewMode.whileEditing
+        member.textColor = .white
+        member.textAlignment = .center
+        member.placeholder = "Name"
+        view.addSubview(member)
+        
+        email = UITextField()
+        email.translatesAutoresizingMaskIntoConstraints = false
+        email.font = .systemFont(ofSize: 30)
+        email.borderStyle = .roundedRect
+        email.layer.cornerRadius = 5.0
+        email.layer.borderWidth = 0.7
+        email.backgroundColor = lightBlue
+        email.clearButtonMode = UITextField.ViewMode.whileEditing
+        email.textColor = .white
+        email.textAlignment = .center
+        email.placeholder = "Email"
+        view.addSubview(email)
+        
+        addUserButton = UIButton()
+        addUserButton.translatesAutoresizingMaskIntoConstraints = false
+        addUserButton.setTitle("  ADD MEMBER ", for: .normal)
+        addUserButton.setTitleColor(.white, for: .normal)
+        addUserButton.backgroundColor = lightGreen
+        addUserButton.layer.borderColor = UIColor.black.cgColor
+        addUserButton.layer.borderWidth = 0.8
+        addUserButton.layer.cornerRadius = 8
+        addUserButton.addTarget(self, action: #selector(addUser), for: .touchUpInside)
+        view.addSubview(addUserButton)
+        
         setupConstraints()
         
         // Do any additional setup after loading the view.
@@ -152,17 +205,63 @@ class AddTaskViewController: UIViewController {
 
             addButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -topPadding),
             addButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            addButton.heightAnchor.constraint(equalToConstant: height)
+            addButton.heightAnchor.constraint(equalToConstant: height),
+            
+            memberLabel.topAnchor.constraint(equalTo: content.bottomAnchor, constant: padding1),
+            memberLabel.heightAnchor.constraint(equalToConstant: height),
+            memberLabel.trailingAnchor.constraint(equalTo: nameLabel.trailingAnchor),
+
+            member.topAnchor.constraint(equalTo: memberLabel.topAnchor),
+            member.leadingAnchor.constraint(equalTo: name.leadingAnchor),
+            member.heightAnchor.constraint(equalToConstant: height),
+            member.trailingAnchor.constraint(equalTo: name.trailingAnchor),
+            
+            email.topAnchor.constraint(equalTo: member.bottomAnchor, constant: padding1),
+            email.leadingAnchor.constraint(equalTo: name.leadingAnchor),
+            email.heightAnchor.constraint(equalToConstant: height),
+            email.trailingAnchor.constraint(equalTo: name.trailingAnchor),
+            
+            addUserButton.topAnchor.constraint(equalTo: email.bottomAnchor, constant: padding1),
+            addUserButton.centerXAnchor.constraint(equalTo: email.centerXAnchor),
+            addUserButton.heightAnchor.constraint(equalToConstant: height)
         ])
         
+    }
+    private func createTask(id:Int, title:String, body:String, deadline:String) {
+        NetworkManager.createTask(id: id, title: title, deadline: deadline, body: body) { result in
+            self.taskId = result
+        }
+    }
+    
+    private func createUser(user:String, email:String){
+        NetworkManager.createUser(id: taskId, user: user, email: email) { result in
+            let userAdded = result
+            if (userAdded){
+                print(true)
+            }
+        }
     }
     
     @objc func add(){
         if let text = name.text, text != "", let deadlineText = deadline.text, let contentText = content.text {
-            delegate?.saveTask(taskName: text, taskDeadline: deadlineText, taskContent: contentText)
+            delegate?.saveTask(title: text, deadline: deadlineText, body:contentText, users:self.Users)
             dismiss(animated: true, completion: nil)
         }else{
             let alertController = UIAlertController(title: "Alert", message: "The name of the task cannot be empty.", preferredStyle: .alert)
+            let action = UIAlertAction(title: "Done", style: .default) {_ in }
+            alertController.addAction(action)
+            self.present(alertController, animated: true, completion: nil)
+        }
+        
+    }
+    
+    @objc func addUser(){
+        if let text = member.text, text != "", let text1 = email.text, text1 != "" {
+            Users[text] = text1
+            member.text = ""
+            email.text = ""
+        }else{
+            let alertController = UIAlertController(title: "Alert", message: "The name or email cannot be empty.", preferredStyle: .alert)
             let action = UIAlertAction(title: "Done", style: .default) {_ in }
             alertController.addAction(action)
             self.present(alertController, animated: true, completion: nil)
