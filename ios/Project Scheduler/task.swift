@@ -12,12 +12,10 @@ struct TasksDataResponse: Codable {
 }
 
 struct Task: Codable{
-    
-    var id: Int
-    var title: String
     var body: String
     var deadline: String
-    var projectId: String
-
+    var id: Int
+    //var projectId: Int
+    var title: String
 }
 

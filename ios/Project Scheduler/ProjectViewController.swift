@@ -165,12 +165,8 @@ class ProjectViewController: UIViewController {
         
         NetworkManager.getTasks(id: id) { tasks in
             self.tasks = tasks
-            
-            DispatchQueue.main.async {
-                self.tableView.reloadData()
+            self.tableView.reloadData()
             }
-            
-        }
         
     }
     
@@ -239,11 +235,13 @@ extension ProjectViewController: TaskDelegate {
     func createTask(title: String, deadline: String, body: String, users: [String : String]) {
         NetworkManager.createTask(id: self.id, title: title, deadline: deadline, body: body) { result in
             self.taskid = result
+            print("hello")
             print(users)
             
         }
-        
+        print("middle")
         for (name, email) in users {
+            print("bye")
             print(self.taskid)
             NetworkManager.createUser(id: self.taskid , user: name, email: email) { result in
                 let userCreated = result
@@ -253,8 +251,9 @@ extension ProjectViewController: TaskDelegate {
                 }
                 
             }
-            
         }
+        getTasks()
+        self.tableView.reloadData()
         
     }
     

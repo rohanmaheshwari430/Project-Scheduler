@@ -108,6 +108,7 @@ extension ViewController: UITableViewDelegate {
                 }
                 
             }
+            getProjects()
             tableView.deleteRows(at: [indexPath], with: .fade)
             tableView.reloadData()
         }

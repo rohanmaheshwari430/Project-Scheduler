@@ -182,6 +182,7 @@ class NetworkManager {
             "deadline": deadline,
             "body": body
         ]
+        print(id)
         let endpoint = "\(host)/api/tasks/\(id)/"
         print(parameters)
         AF.request(endpoint, method: .post, parameters: parameters, encoding: JSONEncoding.default).validate().responseData { response in

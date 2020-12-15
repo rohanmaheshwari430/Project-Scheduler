@@ -229,6 +229,7 @@ class AddTaskViewController: UIViewController {
     @objc func add(){
         if let text = name.text, text != "", let deadlineText = deadline.text, let contentText = content.text {
             delegate?.createTask(title: text, deadline: deadlineText, body:contentText, users: Users)
+            
             dismiss(animated: true, completion: nil)
         }else{
             let alertController = UIAlertController(title: "Alert", message: "The name of the task cannot be empty.", preferredStyle: .alert)
