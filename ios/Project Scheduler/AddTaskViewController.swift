@@ -225,20 +225,6 @@ class AddTaskViewController: UIViewController {
         ])
         
     }
-    private func createTask(id:Int, title:String, body:String, deadline:String) {
-        NetworkManager.createTask(id: id, title: title, deadline: deadline, body: body) { result in
-            self.taskId = result
-        }
-    }
-    
-    private func createUser(user:String, email:String){
-        NetworkManager.createUser(id: taskId, user: user, email: email) { result in
-            let userAdded = result
-            if (userAdded){
-                print(true)
-            }
-        }
-    }
     
     @objc func add(){
         if let text = name.text, text != "", let deadlineText = deadline.text, let contentText = content.text {

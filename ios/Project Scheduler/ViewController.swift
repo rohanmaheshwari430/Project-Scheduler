@@ -41,7 +41,6 @@ class ViewController: UIViewController {
         
         tableView.register(ProjectTableViewCell.self, forCellReuseIdentifier: reuseIdentifier)
         view.addSubview(tableView)
-        print("hello")
         getProjects()
         setupConstraints()
     }
@@ -56,15 +55,11 @@ class ViewController: UIViewController {
         ])
     }
     
-    private func getProjects() {
-        print("wow")
+    func getProjects() {
         NetworkManager.getProjects { projects in
             self.Projects = projects
             print(self.Projects)
-            DispatchQueue.main.async {
-                self.tableView.reloadData()
-            }
-            
+            self.tableView.reloadData()
         }
     }
     
@@ -125,9 +120,8 @@ extension ViewController: SaveDelegate {
                 print("Created project")
             }
             self.getProjects()
-            DispatchQueue.main.async {
-                self.tableView.reloadData()
-            }
+            self.tableView.reloadData()
+            
         }
         navigationController?.popViewController(animated: true)
         
@@ -142,9 +136,7 @@ extension ViewController: ProjectDelegate {
                 print("Saved Project")
             }
             self.getProjects()
-            DispatchQueue.main.async {
-                self.tableView.reloadData()
-            }
+            self.tableView.reloadData()
         }
     }
 }

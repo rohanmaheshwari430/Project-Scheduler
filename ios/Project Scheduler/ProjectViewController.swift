@@ -237,24 +237,25 @@ extension ProjectViewController: UITableViewDelegate {
 
 extension ProjectViewController: TaskDelegate {
     func createTask(title: String, deadline: String, body: String, users: [String : String]) {
-
-        NetworkManager.createTask(id: self.id, title: title, deadline: deadline, body: body) { taskid in
+        print(self.id)
+        NetworkManager.createTask(id: self.id, title: title, deadline: deadline, body: body) {  in
             self.taskid = taskid
-            print(self.taskid)
-        }
-        for (name, email) in users {
-            print(taskid)
-            print(self.taskid)
-            NetworkManager.createUser(id: taskid , user: name, email: email) { result in
-                let userCreated = result
-                
-                if userCreated {
-                    print("created user " + name)
+            
+            for (name, email) in users {
+                print(taskid)
+                print(self.taskid)
+                NetworkManager.createUser(id: taskid , user: name, email: email) { result in
+                    let userCreated = result
+                    
+                    if userCreated {
+                        print("created user " + name)
+                    }
+                    
                 }
                 
             }
-            
         }
+        
     }
     
 }
