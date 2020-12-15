@@ -17,6 +17,6 @@ struct Project: Codable {
     var id: Int
     var title:String
     var description:String
-    var users:[Int]
-    var tasks:[Task]
+    var tasks: [Task]
+    var users: [User]
 }

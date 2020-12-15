@@ -41,6 +41,8 @@ class ViewController: UIViewController {
         
         tableView.register(ProjectTableViewCell.self, forCellReuseIdentifier: reuseIdentifier)
         view.addSubview(tableView)
+        
+        print("getting projects")
         getProjects()
         setupConstraints()
     }

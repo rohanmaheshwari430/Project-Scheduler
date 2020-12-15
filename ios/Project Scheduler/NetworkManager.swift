@@ -22,6 +22,7 @@ class NetworkManager {
                 jsonDecoder.keyDecodingStrategy = .convertFromSnakeCase
                 if let projectsData = try? jsonDecoder.decode(ProjectsDataResponse.self, from: data) {
                     let projects = projectsData.data
+                    
                     completion(projects)
                 }
             case .failure(let error):
@@ -182,19 +183,26 @@ class NetworkManager {
             "body": body
         ]
         let endpoint = "\(host)/api/tasks/\(id)/"
+        print(parameters)
         AF.request(endpoint, method: .post, parameters: parameters, encoding: JSONEncoding.default).validate().responseData { response in
+            print("1")
             switch response.result {
             case .success(let data):
+                print("2")
                 let jsonDecoder = JSONDecoder()
                 jsonDecoder.keyDecodingStrategy = .convertFromSnakeCase
                 if let task = try? jsonDecoder.decode(Task.self, from: data) {
                     // Instructions: Use completion to handle response
-                    let taskid = task.id
-                    completion(taskid)
+                    print("3")
+                    let result = task.id
+                    print(result)
+                    print("success")
+                    completion(result)
                 }
             case .failure(let error):
                 print(error.localizedDescription)
             }
+            print("4")
         }
     }
     

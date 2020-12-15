@@ -17,7 +17,7 @@ struct Task: Codable{
     var title: String
     var body: String
     var deadline: String
-    var project_id: Int
-    var users: [User]
+    var projectId: String
 
 }
+
