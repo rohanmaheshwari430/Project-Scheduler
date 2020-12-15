@@ -116,7 +116,7 @@ def create_task(project_id):
         db.session.commit()
         formatted_task = new_task.serialize()
         formatted_task['project'] = selected_project.serialize()
-        return success_response(formatted_task, 201)
+        return success_response(formatted_task, 201)    
 
 @app.route('/api/projects/<int:project_id>/tasks/')
 def get_tasks_for_project(project_id):
