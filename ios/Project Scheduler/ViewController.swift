@@ -19,7 +19,7 @@ class ViewController: UIViewController {
 
     let reuseIdentifier = "CellReuse"
     let cellHeight: CGFloat = 80
-    var Projects: [Project]!
+    var Projects: [Project]! = []
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -30,7 +30,6 @@ class ViewController: UIViewController {
         //181, 147, 125
         let darkBrown = UIColor(red: 181/255, green: 147/255, blue: 125/255, alpha: 1.00)
         navigationItem.rightBarButtonItem?.tintColor = darkBrown
-        Projects = []
         
         // Initialize tableView!
         tableView = UITableView()
@@ -42,7 +41,7 @@ class ViewController: UIViewController {
         
         tableView.register(ProjectTableViewCell.self, forCellReuseIdentifier: reuseIdentifier)
         view.addSubview(tableView)
-
+        print("hello")
         getProjects()
         setupConstraints()
     }
@@ -58,8 +57,10 @@ class ViewController: UIViewController {
     }
     
     private func getProjects() {
+        print("wow")
         NetworkManager.getProjects { projects in
             self.Projects = projects
+            print(self.Projects)
             DispatchQueue.main.async {
                 self.tableView.reloadData()
             }
@@ -123,9 +124,13 @@ extension ViewController: SaveDelegate {
             if tableLoad {
                 print("Created project")
             }
+            self.getProjects()
+            DispatchQueue.main.async {
+                self.tableView.reloadData()
+            }
         }
         navigationController?.popViewController(animated: true)
-        tableView.reloadData()
+        
     }
 }
 
@@ -136,7 +141,10 @@ extension ViewController: ProjectDelegate {
             if projectSave {
                 print("Saved Project")
             }
+            self.getProjects()
+            DispatchQueue.main.async {
+                self.tableView.reloadData()
+            }
         }
-        tableView.reloadData()
     }
 }

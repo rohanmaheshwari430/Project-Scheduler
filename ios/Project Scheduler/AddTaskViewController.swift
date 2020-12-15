@@ -13,7 +13,7 @@ class AddTaskViewController: UIViewController {
     var deadlineLabel: UILabel!
     var deadline: UITextField!
     var contentLabel: UILabel!
-    var content: UITextField!
+    var content: UITextView!
     var addButton: UIButton!
     var memberLabel:UILabel!
     var member:UITextField!
@@ -28,6 +28,7 @@ class AddTaskViewController: UIViewController {
         super.init(nibName: nil, bundle: nil)
         self.delegate = delegate
         self.projectId = id
+        self.Users = [:]
     }
     
     required init?(coder: NSCoder) {
@@ -91,15 +92,14 @@ class AddTaskViewController: UIViewController {
         //contentLabel.textAlignment = .left
         view.addSubview(contentLabel)
         
-        content = UITextField()
+        content = UITextView()
         content.translatesAutoresizingMaskIntoConstraints = false
-        content.font = .systemFont(ofSize: 30)
-        content.borderStyle = .roundedRect
+        content.font = .systemFont(ofSize: 15)
         content.layer.cornerRadius = 5.0
         content.layer.borderWidth = 0.7
         content.backgroundColor = lightBlue
-        content.clearButtonMode = UITextField.ViewMode.whileEditing
-        content.textAlignment = .center
+        content.clipsToBounds = true
+        content.textAlignment = .left
         content.textColor = .white
         view.addSubview(content)
         
@@ -209,20 +209,18 @@ class AddTaskViewController: UIViewController {
             
             memberLabel.topAnchor.constraint(equalTo: content.bottomAnchor, constant: padding1),
             memberLabel.heightAnchor.constraint(equalToConstant: height),
-            memberLabel.trailingAnchor.constraint(equalTo: nameLabel.trailingAnchor),
-
-            member.topAnchor.constraint(equalTo: memberLabel.topAnchor),
-            member.leadingAnchor.constraint(equalTo: name.leadingAnchor),
+            memberLabel.trailingAnchor.constraint(equalTo: nameLabel.trailingAnchor, constant: -padding1),
+            member.topAnchor.constraint(equalTo: memberLabel.bottomAnchor, constant: padding1),
+            member.leadingAnchor.constraint(equalTo: memberLabel.leadingAnchor),
             member.heightAnchor.constraint(equalToConstant: height),
             member.trailingAnchor.constraint(equalTo: name.trailingAnchor),
-            
             email.topAnchor.constraint(equalTo: member.bottomAnchor, constant: padding1),
-            email.leadingAnchor.constraint(equalTo: name.leadingAnchor),
+            email.leadingAnchor.constraint(equalTo: member.leadingAnchor),
             email.heightAnchor.constraint(equalToConstant: height),
             email.trailingAnchor.constraint(equalTo: name.trailingAnchor),
             
             addUserButton.topAnchor.constraint(equalTo: email.bottomAnchor, constant: padding1),
-            addUserButton.centerXAnchor.constraint(equalTo: email.centerXAnchor),
+            addUserButton.leadingAnchor.constraint(equalTo: memberLabel.trailingAnchor, constant: padding2),
             addUserButton.heightAnchor.constraint(equalToConstant: height)
         ])
         
@@ -244,7 +242,7 @@ class AddTaskViewController: UIViewController {
     
     @objc func add(){
         if let text = name.text, text != "", let deadlineText = deadline.text, let contentText = content.text {
-            delegate?.saveTask(title: text, deadline: deadlineText, body:contentText, users:self.Users)
+            delegate?.createTask(title: text, deadline: deadlineText, body:contentText, users: Users)
             dismiss(animated: true, completion: nil)
         }else{
             let alertController = UIAlertController(title: "Alert", message: "The name of the task cannot be empty.", preferredStyle: .alert)

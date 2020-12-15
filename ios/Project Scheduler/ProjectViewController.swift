@@ -8,7 +8,7 @@
 import UIKit
 
 protocol TaskDelegate: class {
-    func addTask(taskName: String, taskDeadline: String, taskContent: String)
+    func createTask(title: String, deadline: String, body: String, users: [String: String])
 }
 
 class ProjectViewController: UIViewController {
@@ -25,6 +25,7 @@ class ProjectViewController: UIViewController {
     var tasks: [Task]!
     var project: Project!
     var id: Int!
+    var taskid: Int!
     weak var delegate: ProjectDelegate?
 
     init(delegate: ProjectDelegate?, project: Project, id: Int) {
@@ -74,7 +75,6 @@ class ProjectViewController: UIViewController {
         name.clearButtonMode = UITextField.ViewMode.whileEditing
         name.textColor = .white
         name.textAlignment = .center
-        name.text = project.name
         view.addSubview(name)
         
         contentLabel = UILabel()
@@ -95,7 +95,6 @@ class ProjectViewController: UIViewController {
         //content.clearButtonMode = UITextField.ViewMode.whileEditing
         content.textColor = .white
         //content.textAlignment = .center
-        content.text = project.content
         view.addSubview(content)
         
         addTaskButton = UIButton()
@@ -153,8 +152,30 @@ class ProjectViewController: UIViewController {
         ])
     }
     
+    private func getProject() {
+        
+        NetworkManager.getProject(id: id) { project in
+            self.project = project
+        }
+        name.text = project.title
+        content.text = project.description
+    }
+    
+    private func getTasks() {
+        
+        NetworkManager.getTasks(id: id) { tasks in
+            self.tasks = tasks
+            
+            DispatchQueue.main.async {
+                self.tableView.reloadData()
+            }
+            
+        }
+        
+    }
+    
     @objc func addTask() {
-        let newAddTaskViewController = AddTaskViewController(delegate: self)
+        let newAddTaskViewController = AddTaskViewController(delegate: self, id: id)
         present(newAddTaskViewController, animated: true, completion: nil)
     }
     
@@ -163,7 +184,7 @@ class ProjectViewController: UIViewController {
 
         if self.isMovingFromParent {
             if let titleText = name.text, titleText != "", let contentText = content.text {
-                delegate?.save(title: titleText, description: contentText, newTasks: tasks, id: id)
+                delegate?.save(title: titleText, description: contentText, id: id)
             }else{
                 let alertController = UIAlertController(title: "Alert", message: "The name of the project cannot be empty.", preferredStyle: .alert)
                 let action = UIAlertAction(title: "Done", style: .default) {_ in }
@@ -215,10 +236,25 @@ extension ProjectViewController: UITableViewDelegate {
 }
 
 extension ProjectViewController: TaskDelegate {
-    func saveTask(taskName: String, taskDeadline: String, taskContent: String) {
-        let entryTask = Task(name: taskName, deadline: taskDeadline, content: taskContent)
-        tasks.append(entryTask)
-        tableView.reloadData()
+    func createTask(title: String, deadline: String, body: String, users: [String : String]) {
+
+        NetworkManager.createTask(id: self.id, title: title, deadline: deadline, body: body) { taskid in
+            self.taskid = taskid
+            print(self.taskid)
+        }
+        for (name, email) in users {
+            print(taskid)
+            print(self.taskid)
+            NetworkManager.createUser(id: taskid , user: name, email: email) { result in
+                let userCreated = result
+                
+                if userCreated {
+                    print("created user " + name)
+                }
+                
+            }
+            
+        }
     }
     
 }
