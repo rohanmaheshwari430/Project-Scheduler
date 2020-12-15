@@ -51,7 +51,7 @@ class Task(db.Model):
             'title': self.title,
             'body': self.body,
             'deadline': self.deadline,
-            'project_id': self.project_id
+            'projectId': self.project_id
         }
 
 class User(db.Model):
