@@ -57,7 +57,7 @@ class ProjectTableViewCell: UITableViewCell {
     }
 
     func configure(for Project:Project) {
-        nameLabel.text = Project.name
+        nameLabel.text = Project.title
     }
 
     

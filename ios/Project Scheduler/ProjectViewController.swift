@@ -8,7 +8,7 @@
 import UIKit
 
 protocol TaskDelegate: class {
-    func saveTask(taskName: String, taskDeadline: String, taskContent: String)
+    func addTask(taskName: String, taskDeadline: String, taskContent: String)
 }
 
 class ProjectViewController: UIViewController {
@@ -27,10 +27,12 @@ class ProjectViewController: UIViewController {
     var id: Int!
     weak var delegate: ProjectDelegate?
 
-    init(delegate: ProjectDelegate?, project: Project) {
+    init(delegate: ProjectDelegate?, project: Project, id: Int) {
         super.init(nibName: nil, bundle: nil)
         self.delegate = delegate
         self.project = project
+        self.id = id
+        self.tasks = []
     }
     
     required init?(coder: NSCoder) {
@@ -109,6 +111,8 @@ class ProjectViewController: UIViewController {
 
         // Do any additional setup after loading the view.
         setupConstraints()
+        getProject()
+        getTasks()
     }
     
     func setupConstraints(){
@@ -159,7 +163,7 @@ class ProjectViewController: UIViewController {
 
         if self.isMovingFromParent {
             if let titleText = name.text, titleText != "", let contentText = content.text {
-                delegate?.save(newName: titleText, newContent: contentText, newTasks: tasks, id: id)
+                delegate?.save(title: titleText, description: contentText, newTasks: tasks, id: id)
             }else{
                 let alertController = UIAlertController(title: "Alert", message: "The name of the project cannot be empty.", preferredStyle: .alert)
                 let action = UIAlertAction(title: "Done", style: .default) {_ in }

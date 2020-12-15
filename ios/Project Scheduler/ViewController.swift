@@ -8,11 +8,11 @@
 import UIKit
 
 protocol SaveDelegate: class {
-    func save(newName: String, newContent:String)
+    func save(title: String, description:String)
 }
 
 protocol ProjectDelegate: class {
-    func save(newName: String, newContent: String, newTasks: [Task], id: Int)
+    func save(title: String, description: String, id: Int)
 }
 class ViewController: UIViewController {
     var tableView: UITableView!
@@ -95,14 +95,21 @@ extension ViewController: UITableViewDelegate {
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let project = Projects[indexPath.row]
-        let newProjectViewController = ProjectViewController(delegate: self, project: project, id: indexPath.row)
+        let newProjectViewController = ProjectViewController(delegate: self, project: project, id: project.id)
         navigationController?.pushViewController(newProjectViewController, animated: true)
     }
     
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
             // Delete the row from the data source
-            Projects.remove(at: indexPath.row)
+            let id = Projects[indexPath.row].id
+            NetworkManager.deleteProject(id: id) { result in
+                let projectDeleted = result
+                if projectDeleted {
+                    print("Project deleted")
+                }
+                
+            }
             tableView.deleteRows(at: [indexPath], with: .fade)
             tableView.reloadData()
         }
@@ -110,18 +117,26 @@ extension ViewController: UITableViewDelegate {
     
 }
 extension ViewController: SaveDelegate {
-    func save(newName: String, newContent:String) {
-        let entry = Project(name: newName,content: newContent)
-        Projects.append(entry)
+    func save(title: String, description:String) {
+        NetworkManager.createProject(title: title, description: description) { result in
+            let tableLoad = result
+            if tableLoad {
+                print("Created project")
+            }
+        }
+        navigationController?.popViewController(animated: true)
         tableView.reloadData()
     }
 }
 
 extension ViewController: ProjectDelegate {
-    func save(newName: String, newContent: String, newTasks: [Task], id: Int) {
-        Projects[id].name = newName
-        Projects[id].content = newContent
-        Projects[id].Tasks = newTasks
+    func save(title: String, description: String, id: Int) {
+        NetworkManager.updateProject(id: id, title: title, description: description) { result in
+            let projectSave = result
+            if projectSave {
+                print("Saved Project")
+            }
+        }
         tableView.reloadData()
     }
 }

@@ -94,7 +94,7 @@ class AddViewController: UIViewController {
     
     @objc func add() {
         if let text = name.text, text != ""{
-            delegate?.save(newName: text, newContent: content.text)
+            delegate?.save(title: text, description: content.text)
         }else{
             let alertController = UIAlertController(title: "Alert", message: "The name of the project cannot be empty.", preferredStyle: .alert)
             let action = UIAlertAction(title: "Done", style: .default) {_ in }

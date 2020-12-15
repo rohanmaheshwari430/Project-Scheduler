@@ -30,6 +30,23 @@ class NetworkManager {
         }
     }
     
+    static func getProject(id: Int, completion: @escaping (Project) -> Void) {
+        let endpoint = "\(host)/api/projects/\(id)/"
+        AF.request(endpoint, method: .get).validate().responseData { response in
+            switch response.result {
+            case .success(let data):
+                let jsonDecoder = JSONDecoder()
+                jsonDecoder.keyDecodingStrategy = .convertFromSnakeCase
+                if let project = try? jsonDecoder.decode(Project.self, from: data) {
+                    // Instructions: Use completion to handle response
+                    completion(project)
+                }
+            case .failure(let error):
+                print(error.localizedDescription)
+            }
+        }
+    }
+    
     static func getTasks(id: Int, completion: @escaping ([Task]) -> Void) {
         let endpoint = "\(host)/api/projects/\(id)/tasks/"
         AF.request(endpoint, method: .get).validate().responseData { response in
@@ -40,6 +57,23 @@ class NetworkManager {
                 if let tasksData = try? jsonDecoder.decode(TasksDataResponse.self, from: data) {
                     let tasks = tasksData.data
                     completion(tasks)
+                }
+            case .failure(let error):
+                print(error.localizedDescription)
+            }
+        }
+    }
+    
+    static func getTask(id: Int, completion: @escaping (Task) -> Void) {
+        let endpoint = "\(host)/api/tasks/\(id)/"
+        AF.request(endpoint, method: .get).validate().responseData { response in
+            switch response.result {
+            case .success(let data):
+                let jsonDecoder = JSONDecoder()
+                jsonDecoder.keyDecodingStrategy = .convertFromSnakeCase
+                if let task = try? jsonDecoder.decode(Task.self, from: data) {
+                    // Instructions: Use completion to handle response
+                    completion(task)
                 }
             case .failure(let error):
                 print(error.localizedDescription)
@@ -111,6 +145,19 @@ class NetworkManager {
         }
     }
     
+    static func deleteUser(userid: Int, taskid: Int, completion: @escaping (Bool) -> Void) {
+        let endpoint = "\(host)/api/tasks/\(taskid)/users/\(userid)/"
+        AF.request(endpoint, method: .delete).validate().responseData { response in
+            switch response.result {
+            case .success(let data):
+                completion(true)
+            case .failure(let error):
+                print(error.localizedDescription)
+                completion(false)
+            }
+        }
+    }
+    
     static func createProject(title: String, description: String, completion: @escaping (Bool) -> Void) {
         let parameters: [String: Any] = [
             "title": title,
@@ -128,19 +175,25 @@ class NetworkManager {
         }
     }
     
-    static func createTask(id: Int, title: String, deadline: String, completion: @escaping (Bool) -> Void) {
+    static func createTask(id: Int, title: String, deadline: String, body: String, completion: @escaping (Int) -> Void) {
         let parameters: [String: Any] = [
             "title": title,
-            "deadline": deadline
+            "deadline": deadline,
+            "body": body
         ]
         let endpoint = "\(host)/api/tasks/\(id)/"
         AF.request(endpoint, method: .post, parameters: parameters, encoding: JSONEncoding.default).validate().responseData { response in
             switch response.result {
             case .success(let data):
-                completion(true)
+                let jsonDecoder = JSONDecoder()
+                jsonDecoder.keyDecodingStrategy = .convertFromSnakeCase
+                if let task = try? jsonDecoder.decode(Task.self, from: data) {
+                    // Instructions: Use completion to handle response
+                    let taskid = task.id
+                    completion(taskid)
+                }
             case .failure(let error):
                 print(error.localizedDescription)
-                completion(false)
             }
         }
     }
