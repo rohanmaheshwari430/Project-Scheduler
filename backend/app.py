@@ -114,7 +114,7 @@ def create_task(project_id):
         selected_project = Project.query.filter_by(id = project_id).first()
         if selected_project == None:
             return failure_response("Project not found.")
-        new_task = Task(title = body.get('title'), description = body.get('body'), deadline = body.get('deadline'), project_id = project_id)
+        new_task = Task(title = body.get('title'), body = body.get('body'), deadline = body.get('deadline'), project_id = project_id)
         db.session.add(new_task)
         db.session.commit()
         formatted_task = new_task.serialize()
