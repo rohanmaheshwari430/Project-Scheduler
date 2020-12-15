@@ -2,6 +2,7 @@ from db import db
 from db import Project, Task, User
 from flask import Flask, request, json
 import datetime
+import os
 
 app = Flask(__name__)
 db_filename = "project_scheduler.db"
@@ -12,11 +13,13 @@ app.config["SQLALCHEMY_ECHO"] = True
 
 db.init_app(app)
 with app.app_context():
-    db.drop_all()
     db.create_all()
 
 def success_response(data, code=200):
     return json.dumps({'success': True, 'data': data}), code
+
+def success_response(data, message, code=200):
+    return json.dumps({'success': True, 'message': message, 'data': data}), code
 
 def failure_response(error, code=404):
     return json.dumps({'success': False, 'error': error}), code
@@ -31,6 +34,14 @@ def get_projects():
         formatted_p['users'] = [u.serialize() for u in p.users]
         data.append(formatted_p)
     return success_response(data, 200)
+
+@app.route('/api/projects/<int:project_id>/')
+def get_project(project_id):
+    selected_project = Project.query.filter_by(id = project_id).first()
+    formatted_project = selected_project.serialize()
+    formatted_project['tasks'] = [t.serialize() for t in Task.query.filter_by(project_id = project_id).all()]
+    formatted_project['users'] = [u.serialize() for u in selected_project.users]
+    return success_response(formatted_project, 200)
 
 @app.route('/api/projects/', methods=["POST"])
 def create_project():
@@ -70,6 +81,30 @@ def delete_project(project_id):
     db.session.commit()
     return success_response(selected_project.serialize(), 200)
 
+@app.route('/api/projects/<int:project_id>/users/<int:user_id>/', methods=["DELETE"])
+def delete_user_from_project(user_id, project_id):
+    selected_user = User.query.filter_by(id = user_id).first()
+    selected_project = Project.query.filter_by(id = project_id).first()
+    if selected_project == None:
+        return failure_response("Project not found.")
+    if selected_user == None:
+        return failure_response("User not found.")
+    
+    user_in_project = False
+    for p in selected_user.projects:
+        if p.id == project_id:
+            user_in_project = True
+            break
+
+    if user_in_project == True:
+        selected_user.projects.remove(selected_project)
+        #selected_project.users.remove(selected_user)
+        db.session.commit()
+        formatted_selected_user = selected_user.serialize()
+        return success_response(formatted_selected_user, "User has been removed from: " + selected_project.serialize()["title"], 201)
+    else:
+        return failure_response(formatted_selected_user, "User is not assigned to that project.")
+
 @app.route('/api/tasks/<int:project_id>/', methods=["POST"])
 def create_task(project_id):
     body = json.loads(request.data)
@@ -95,6 +130,14 @@ def get_tasks_for_project(project_id):
         
     return success_response(data)
 
+@app.route('/api/tasks/<int:task_id>/')
+def get_task(task_id):
+    selected_task = Task.query.filter_by(id = task_id).first()
+    formatted_task = selected_task.serialize()
+    formatted_task['project'] = Project.query.filter_by(id = selected_task.project_id).first().serialize()
+    formatted_task['users'] = [u.serialize() for u in selected_task.users]
+    return success_response(formatted_task, 200)
+
 #add user to task
 @app.route('/api/tasks/<int:task_id>/users/', methods=["POST"])
 def add_user_to_task(task_id):
@@ -108,19 +151,55 @@ def add_user_to_task(task_id):
     if selected_user == None: #if email not exist, create user like below
         new_user = User(name = body.get('name'), email = body.get('email', None))
         db.session.add(new_user)
+        new_user.tasks.append(selected_task)
+        new_user.projects.append(selected_project)
+
         selected_task.users.append(new_user)
         selected_project.users.append(new_user)
+        print(selected_task.users)
+        print(selected_task)
+        print(selected_project.users)
+        print("bruhs")
+
         db.session.commit()
         selected_user = new_user
     else:
         if body.get('name') != selected_user.name:
             return failure_response("Invalid user. Two users cannot have the same email.")
+        selected_user.tasks.append(selected_task)
+        selected_user.projects.append(selected_project)
+
         selected_task.users.append(selected_user)
+        selected_project.users.append(selected_user)
         db.session.commit()
 
     formatted_selected_user = selected_user.serialize()
-    return success_response("User has been added to: " + selected_task.serialize()["title"], 201)
+    return success_response(formatted_selected_user, "User has been added to: " + selected_task.serialize()["title"], 201)
 
+@app.route('/api/tasks/<int:task_id>/users/<int:user_id>/', methods=["DELETE"])
+def delete_user_from_task(user_id, task_id):
+    selected_user = User.query.filter_by(id = user_id).first()
+    selected_task = Task.query.filter_by(id = task_id).first()
+    if selected_task == None:
+        return failure_response("Task not found.")
+    if selected_user == None:
+        return failure_response("User not found.")
+    
+    user_in_task = False
+    for t in selected_user.tasks:
+        if t.id == task_id:
+            user_in_task = True
+            break
+
+    if user_in_task == True:
+        selected_user.tasks.remove(selected_task)
+        #selected_task.users.remove(selected_user)
+        db.session.commit()
+        formatted_selected_user = selected_user.serialize()
+        return success_response(formatted_selected_user, "User has been removed from: " + selected_task.serialize()["title"], 201)
+    else:
+        return failure_response(formatted_selected_user, "User is not assigned to that task.")
+    
 @app.route("/api/tasks/<int:task_id>/", methods=["PATCH"])
 def update_task(task_id):
     body = json.loads(request.data)
@@ -148,4 +227,5 @@ def delete_task(task_id):
     return success_response(selected_task.serialize(), 200)
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000, debug=True)
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host='0.0.0.0', port=port)
