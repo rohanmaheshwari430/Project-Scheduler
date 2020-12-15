@@ -120,7 +120,7 @@ def create_task(project_id):
         db.session.commit()
         formatted_task = new_task.serialize()
         formatted_task['project'] = selected_project.serialize()
-        return success_response(formatted_task, 201)
+        return success_response(formatted_task, 201)    
 
 @app.route('/api/projects/<int:project_id>/tasks/')
 def get_tasks_for_project(project_id):
@@ -129,7 +129,7 @@ def get_tasks_for_project(project_id):
         formatted_task = t.serialize()
         data.append(formatted_task)
         
-    return success_response(data)
+    return success_response(data, "These are the tasks for the project.")
 
 @app.route('/api/tasks/<int:task_id>/')
 def get_task(task_id):
@@ -216,7 +216,7 @@ def update_task(task_id):
     if isinstance(body.get('deadline'), str):
         selected_task.deadline = body.get('deadline')
     db.session.commit()
-    return success_response(selected_project.serialize(), 200)
+    return success_response(selected_task.serialize(), 200)
 
 @app.route('/api/tasks/<int:task_id>/', methods=["DELETE"])
 def delete_task(task_id):
