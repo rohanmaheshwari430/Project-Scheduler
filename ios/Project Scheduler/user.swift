@@ -7,22 +7,17 @@
 
 import Foundation
 
-class User {
-    var name:String
-       var content:String
-       var users:[User]
-       var Tasks:[Task]
-       
-       init(name:String, content:String) {
-           self.name = name
-           self.Tasks = []
-           self.content = content
-          // self.users =
-       }
-       
-       func addTask(task:Task){
-           Tasks.append(task)
-       }
+struct UsersDataResponse: Codable {
     
+    var users: [User]
+    
+}
+struct User: Codable {
+    
+    var id: Int
+    var name: String
+    var email: String
+    var projects: [Project]
+    var tasks: [Task]
     
 }

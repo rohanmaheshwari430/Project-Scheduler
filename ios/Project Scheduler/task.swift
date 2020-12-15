@@ -7,14 +7,17 @@
 
 import Foundation
 
-class Task{
-    var name:String
-    var deadline:String
-    var content:String
+struct TasksDataResponse: Codable {
+    var data: [Task]
+}
+
+struct Task: Codable{
     
-    init(name:String, deadline:String, content:String) {
-        self.name = name
-        self.deadline = deadline
-        self.content = content
-    }
+    var id: Int
+    var title: String
+    var body: String
+    var deadline: String
+    var project_id: Int
+    var users: [User]
+
 }

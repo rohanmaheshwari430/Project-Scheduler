@@ -20,7 +20,6 @@ class ViewController: UIViewController {
     let reuseIdentifier = "CellReuse"
     let cellHeight: CGFloat = 80
     var Projects: [Project]!
-    
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -44,6 +43,7 @@ class ViewController: UIViewController {
         tableView.register(ProjectTableViewCell.self, forCellReuseIdentifier: reuseIdentifier)
         view.addSubview(tableView)
 
+        getProjects()
         setupConstraints()
     }
     
@@ -55,6 +55,16 @@ class ViewController: UIViewController {
             tableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             tableView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
         ])
+    }
+    
+    private func getProjects() {
+        NetworkManager.getProjects { projects in
+            self.Projects = projects
+            DispatchQueue.main.async {
+                self.tableView.reloadData()
+            }
+            
+        }
     }
     
     @objc func add() {

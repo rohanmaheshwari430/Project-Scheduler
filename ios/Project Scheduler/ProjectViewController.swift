@@ -27,12 +27,10 @@ class ProjectViewController: UIViewController {
     var id: Int!
     weak var delegate: ProjectDelegate?
 
-    init(delegate: ProjectDelegate?, project: Project, id: Int) {
+    init(delegate: ProjectDelegate?, project: Project) {
         super.init(nibName: nil, bundle: nil)
         self.delegate = delegate
         self.project = project
-        self.id = id
-        self.tasks = project.Tasks
     }
     
     required init?(coder: NSCoder) {

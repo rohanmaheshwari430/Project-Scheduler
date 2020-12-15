@@ -7,17 +7,16 @@
 
 import Foundation
 
-class Project{
+struct ProjectsDataResponse: Codable {
+    
+    var data: [Project]
+    
+}
+
+struct Project: Codable {
     var id: Int
     var title:String
     var description:String
-    var users:[User]
+    var users:[Int]
     var tasks:[Task]
-    
-    init(title:String, description:String) {
-        self.title = title
-        self.tasks = []
-        self.description = description
-        self.users =
-    }
 }
