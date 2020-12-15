@@ -119,7 +119,7 @@ def create_task(project_id):
         db.session.add(new_task)
         db.session.commit()
         formatted_task = new_task.serialize()
-        formatted_task['project'] = selected_project.serialize()
+        #formatted_task['project'] = selected_project.serialize()
         return success_response(formatted_task, 201)    
 
 @app.route('/api/projects/<int:project_id>/tasks/')
@@ -135,8 +135,8 @@ def get_tasks_for_project(project_id):
 def get_task(task_id):
     selected_task = Task.query.filter_by(id = task_id).first()
     formatted_task = selected_task.serialize()
-    formatted_task['project'] = Project.query.filter_by(id = selected_task.project_id).first().serialize()
-    formatted_task['users'] = [u.serialize() for u in selected_task.users]
+    #formatted_task['project'] = Project.query.filter_by(id = selected_task.project_id).first().serialize()
+    #formatted_task['users'] = [u.serialize() for u in selected_task.users]
     return success_response(formatted_task, 200)
 
 #add user to task
